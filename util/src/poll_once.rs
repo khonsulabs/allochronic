@@ -22,7 +22,9 @@ use pin_project::pin_project;
 /// assert_eq!(Poll::Ready(1), poll(future).await);
 /// # });
 /// ```
-pub fn poll<F: Future>(future: F) -> PollOnce<F> { PollOnce::new(future) }
+pub fn poll<F: Future>(future: F) -> PollOnce<F> {
+	PollOnce::new(future)
+}
 
 /// [`Poll`](std::future::Future::poll)s a [`Future`] a single time, returning
 /// [`Poll`]. See [`poll`] for easier usage.
@@ -45,7 +47,9 @@ pub struct PollOnce<F: Future>(#[pin] F);
 
 impl<F: Future> PollOnce<F> {
 	/// Builds a new [`PollOnce`].
-	pub fn new(future: F) -> Self { Self(future) }
+	pub fn new(future: F) -> Self {
+		Self(future)
+	}
 }
 
 impl<F: Future> Future for PollOnce<F> {

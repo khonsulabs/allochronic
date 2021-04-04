@@ -101,7 +101,9 @@ pub trait PollStreams: Stream + Sized {
 	/// Shares method name with [`PollFutures::__into_poll`], returns
 	/// [`PollStream`](raw::PollStream) that can be polled exactly like
 	/// [`PollOnce`].
-	fn __into_poll(self) -> raw::PollStream<Self> { raw::PollStream::new(self) }
+	fn __into_poll(self) -> raw::PollStream<Self> {
+		raw::PollStream::new(self)
+	}
 
 	/// Shares method name with [`PollFutures::__into_poll_fused`], returns
 	/// [`PollStream`](fused::PollStream) that can be polled exactly like

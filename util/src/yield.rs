@@ -25,7 +25,9 @@ use std::{
 /// assert_eq!(Poll::Ready(1), poll(future).await);
 /// # });
 /// ```
-pub const fn r#yield() -> Yield { Yield::new() }
+pub const fn r#yield() -> Yield {
+	Yield::new()
+}
 
 /// Yields to the executor once. See [`yield`] for easier usage.
 ///
@@ -53,7 +55,9 @@ pub struct Yield(bool);
 
 impl Yield {
 	/// Builds a new [`Yield`].
-	pub const fn new() -> Self { Self(false) }
+	pub const fn new() -> Self {
+		Self(false)
+	}
 }
 
 impl Future for Yield {

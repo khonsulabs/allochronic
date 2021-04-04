@@ -14,9 +14,9 @@ use syn::{
 /// Destructuring [`TokenStream`] for [`select!`](crate::select!).
 struct Items {
 	/// Name of the crate allochronic-util.
-	package:  TokenStream,
+	package: TokenStream,
 	/// Items passed to [`select!`](crate::select!).
-	items:    Vec<Item>,
+	items: Vec<Item>,
 	/// Expression to be run on completion of all passed items.
 	complete: Option<Expr>,
 }
@@ -24,10 +24,10 @@ struct Items {
 /// Destructuring of a single item of [`select!`](crate::select!).
 struct Item {
 	/// Pattern passed to [`success`][Item::success].
-	var:     Pat,
+	var: Pat,
 	/// [`Future`](std::future::Future) or
 	/// [`Stream`](std::stream::Stream) to be polled.
-	future:  Expr,
+	future: Expr,
 	/// Expression to be run on polling success.
 	success: Expr,
 }

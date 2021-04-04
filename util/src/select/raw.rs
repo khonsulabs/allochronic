@@ -44,7 +44,9 @@ pub struct PollStream<S: Stream>(#[pin] S);
 
 impl<S: Stream> PollStream<S> {
 	/// Builds a new [`PollStream`].
-	pub fn new(stream: S) -> Self { Self(stream) }
+	pub fn new(stream: S) -> Self {
+		Self(stream)
+	}
 }
 
 impl<S: Stream> Future for PollStream<S> {

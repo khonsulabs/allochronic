@@ -42,7 +42,9 @@ pub struct PollFuture<F: FusedFuture>(#[pin] Option<F>);
 
 impl<F: FusedFuture> PollFuture<F> {
 	/// Builds a new [`PollFuture`].
-	pub fn new(future: F) -> Self { Self(Some(future)) }
+	pub fn new(future: F) -> Self {
+		Self(Some(future))
+	}
 }
 
 impl<F: FusedFuture> Future for PollFuture<F> {
@@ -105,7 +107,9 @@ pub struct PollStream<S: FusedStream>(#[pin] Option<S>);
 
 impl<S: FusedStream> PollStream<S> {
 	/// Builds a new [`PollStream`].
-	pub fn new(stream: S) -> Self { Self(Some(stream)) }
+	pub fn new(stream: S) -> Self {
+		Self(Some(stream))
+	}
 }
 
 impl<S: FusedStream> Future for PollStream<S> {

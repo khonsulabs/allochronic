@@ -131,4 +131,6 @@ fn error(span: Span, message: &str) -> TokenStream {
 /// # });
 /// ```
 #[proc_macro]
-pub fn select(item: TokenStream) -> TokenStream { select::select(item) }
+pub fn select(item: TokenStream) -> TokenStream {
+	select::select(item)
+}
