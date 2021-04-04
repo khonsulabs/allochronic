@@ -8,6 +8,10 @@ edition = "2018"
 [lib]
 proc-macro = true
 
+[features]
+default = []
+test = []
+
 [dependencies]
 proc-macro2 = "1"
 quote = "1"

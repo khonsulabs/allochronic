@@ -17,8 +17,12 @@ struct Items {
 	package: TokenStream,
 	/// Items passed to [`select!`](crate::select!).
 	items: Vec<Item>,
-	/// Expression to be run on completion of all passed items.
+	/// Expression to run on completion of all passed items.
 	complete: Option<Expr>,
+	/// Expression to run after each yield. This is only used for testing
+	/// purposes.
+	#[cfg(feature = "test")]
+	r#yield: Option<Expr>,
 }
 
 /// Destructuring of a single item of [`select!`](crate::select!).
@@ -37,6 +41,8 @@ impl Parse for Items {
 		let mut package = quote! { allochronic_util };
 		let mut items = Vec::new();
 		let mut complete = None;
+		#[cfg(feature = "test")]
+		let mut r#yield = None;
 
 		loop {
 			let var = if let Ok(var) = input.parse::<Pat>() {
@@ -46,6 +52,8 @@ impl Parse for Items {
 					package,
 					items,
 					complete,
+					#[cfg(feature = "test")]
+					r#yield,
 				});
 			};
 
@@ -85,6 +93,8 @@ impl Parse for Items {
 							package,
 							items,
 							complete,
+							#[cfg(feature = "test")]
+							r#yield,
 						})
 					} else {
 						Err(Error::new(
@@ -110,6 +120,19 @@ impl Parse for Items {
 						));
 					}
 				}
+				#[cfg(feature = "test")]
+				// if the next item is `yield`, the token afterwards has to be "=>"
+				Err(_)
+					if var.to_token_stream().to_string() == "r#yield"
+						&& input.parse::<Token![=>]>().is_ok() =>
+				{
+					r#yield = Some(input.parse()?);
+
+					// the next token is only allowed to be a "," as a separator between items
+					if input.parse::<Option<Token![,]>>()?.is_none() && !input.is_empty() {
+						break Err(Error::new(input.span(), "missing a comma between items"));
+					}
+				}
 				// otherwise, it was just the wrong token
 				Err(error) => break Err(error),
 			}
@@ -119,11 +142,18 @@ impl Parse for Items {
 
 /// See [`select`](crate::select!).
 pub(crate) fn select(item: TokenStream1) -> TokenStream1 {
-	let Items {
-		package,
-		items,
-		complete,
-	} = syn::parse_macro_input!(item);
+	let items: Items = syn::parse_macro_input!(item);
+
+	let package = items.package;
+	let complete = items.complete;
+	#[cfg(feature = "test")]
+	let r#yield = {
+		let r#yield = items.r#yield;
+		quote! { #r#yield; }
+	};
+	#[cfg(not(feature = "test"))]
+	let r#yield = quote! {};
+	let items = items.items;
 
 	if items.is_empty() {
 		return crate::error(Span::call_site(), "`select!` can't be empty");
@@ -162,6 +192,7 @@ pub(crate) fn select(item: TokenStream1) -> TokenStream1 {
 						break ::std::option::Option::None;
 					} else {
 						::#package::r#yield().await;
+						#r#yield
 					}
 				};
 
@@ -196,6 +227,7 @@ pub(crate) fn select(item: TokenStream1) -> TokenStream1 {
 				#stream
 
 				::#package::r#yield().await;
+				#r#yield
 			}
 		})
 		.into()

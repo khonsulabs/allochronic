@@ -10,6 +10,7 @@ version = "0.0.0-reserve"
 name = "allochronic-util"
 version = "0.0.0-reserve"
 dependencies = [
+ "allochronic-util",
  "allochronic-util-macros",
  "futures-executor",
  "futures-util",

@@ -120,3 +120,219 @@ pub trait PollStreams: Stream + Sized {
 }
 
 impl<S: Stream + Sized> PollStreams for S {}
+
+#[cfg(test)]
+mod test {
+	use std::task::Poll;
+
+	use futures_executor::block_on;
+	use futures_util::{
+		pin_mut,
+		stream::{self, poll_fn},
+		FutureExt, StreamExt,
+	};
+	use stream::iter;
+
+	use crate::select;
+
+	#[test]
+	#[should_panic = "`async fn` resumed after completion"]
+	fn select_future() {
+		block_on(async {
+			let future = async { 1_usize };
+			pin_mut!(future);
+
+			while select![
+				result: &mut future => { assert_eq!(1, result); true },
+				r#yield => unreachable!(),
+			] {}
+		});
+	}
+
+	#[test]
+	#[should_panic = "`async fn` resumed after completion"]
+	fn select_futures() {
+		block_on(async {
+			let future1 = async { 1_usize };
+			let future2 = async { 2_usize };
+
+			pin_mut!(future1);
+			pin_mut!(future2);
+
+			#[allow(unreachable_code)]
+			while select![
+				result: &mut future1 => { assert_eq!(1, result); true },
+				_: &mut future2 => unreachable!(),
+				r#yield => unreachable!(),
+			] {}
+		});
+	}
+
+	#[test]
+	fn select_stream() {
+		block_on(async {
+			let mut counter = 0;
+
+			let mut stream = iter(1_usize..=10);
+
+			while let Some(result) = select![
+				result: &mut stream => result,
+				r#yield => unreachable!(),
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 10);
+		});
+	}
+
+	#[test]
+	fn select_streams() {
+		block_on(async {
+			let mut counter = 0;
+
+			let mut stream1 = iter(1_usize..=10);
+			let mut stream2 = iter(11..=20);
+
+			while let Some(result) = select![
+				result: &mut stream1 => result,
+				result: &mut stream2 => result,
+				r#yield => unreachable!(),
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 10);
+		});
+	}
+
+	#[test]
+	fn select_future_fused() {
+		block_on(async {
+			let mut counter = 0;
+
+			let future = async { 1_usize }.fuse();
+			pin_mut!(future);
+
+			while let Some(result) = select![
+				result: &mut future => Some(result),
+				r#yield => unreachable!(),
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 1);
+		});
+	}
+
+	#[test]
+	fn select_futures_fused() {
+		block_on(async {
+			let mut counter = 0;
+
+			let future1 = async { 1_usize }.fuse();
+			let future2 = async { 2 }.fuse();
+
+			pin_mut!(future1);
+			pin_mut!(future2);
+
+			while let Some(result) = select![
+				result: &mut future1 => Some(result),
+				result: &mut future2 => Some(result),
+				r#yield => unreachable!(),
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 2);
+		});
+	}
+
+	#[test]
+	fn select_stream_fused() {
+		block_on(async {
+			let mut counter = 0;
+
+			let mut stream = iter(1_usize..=10).fuse();
+
+			while let Some(result) = select![
+				result: &mut stream => Some(result),
+				r#yield => unreachable!(),
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 10);
+		});
+	}
+
+	#[test]
+	fn select_streams_fused() {
+		block_on(async {
+			let mut counter = 0;
+
+			let mut stream1 = iter(1_usize..=10).fuse();
+			let mut stream2 = iter(11..=20).fuse();
+
+			while let Some(result) = select![
+				result: &mut stream1 => Some(result),
+				result: &mut stream2 => Some(result),
+				r#yield => unreachable!(),
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 20);
+		});
+	}
+
+	#[test]
+	fn select_yield_1() {
+		block_on(async {
+			let mut counter = 0;
+			let mut r#yield = 0_usize;
+
+			let mut stream = {
+				let mut iteration = 0_usize;
+				let mut counter = 0_usize;
+
+				poll_fn(move |_| {
+					let result = match iteration {
+						0..=9 => Poll::Pending,
+						10..=19 => {
+							counter += 1;
+							Poll::Ready(Some(counter))
+						}
+						_ => Poll::Ready(None),
+					};
+
+					iteration += 1;
+					result
+				})
+			}
+			.fuse();
+
+			while let Some(result) = select![
+				result: &mut stream => Some(result),
+				r#yield => r#yield += 1,
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 10);
+			assert_eq!(r#yield, 10);
+		});
+	}
+}

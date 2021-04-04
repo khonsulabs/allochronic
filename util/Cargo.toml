@@ -6,8 +6,12 @@ license = "MIT OR Apache-2.0"
 edition = "2018"
 
 [dependencies]
-macros = { package = "allochronic-util-macros", path = "macros" }
 futures-executor = "0.3"
 futures-util = "0.3"
+macros = { package = "allochronic-util-macros", path = "macros" }
 pin-project = "1"
 trybuild = "1"
+
+[dev-dependencies]
+allochronic-util = { path = "" }
+macros = { package = "allochronic-util-macros", path = "macros", features = ["test"] }
