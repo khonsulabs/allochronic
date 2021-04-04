@@ -9,12 +9,12 @@
 <div class="header">
 <div class="view">
 <div class="viewRow"><span class="viewItem">Current view:</span><span class="viewValue"><a href="../../../index.html">top level</a> - <a href="index.html">util/src/select</a> - mod.rs</span></div>
-<div class="viewRow"><span class="viewItem">Date:</span><span class="viewValue">2021-04-04 17:20:29</span></div>
+<div class="viewRow"><span class="viewItem">Date:</span><span class="viewValue">2021-04-04 17:28:02</span></div>
 </div>
 <div class="stats">
 <div class="statsRow"><span></span><span class="statsHit">Hit</span><span class="statsTotal">Total</span><span class="statsCoverage">Coverage</span></div>
-<div class="statsRow"><span class="statsLine">Lines</span><span class="linesHit">150</span><span class="linesTotal">159</span><span class="linesPercentage lineHi">94.3 %</span></div>
-<div class="statsRow"><span class="statsFun">Functions</span><span class="funsHit">41</span><span class="funsTotal">47</span><span class="funsPercentage funMed">87.2 %</span></div>
+<div class="statsRow"><span class="statsLine">Lines</span><span class="linesHit">181</span><span class="linesTotal">192</span><span class="linesPercentage lineHi">94.3 %</span></div>
+<div class="statsRow"><span class="statsFun">Functions</span><span class="funsHit">46</span><span class="funsTotal">52</span><span class="funsPercentage funMed">88.5 %</span></div>
 <div class="statsRow"><span class="statsBranches">Branches</span><span class="branchesHit">0</span><span class="branchesTotal">0</span><span class="branchesPercentage branchLow">0.0 %</span></div>
 </div>
 </div>
@@ -132,12 +132,12 @@
 <div class="line"><span id="111" class="lineNum"><a href="#111">111</a></span><span class="counterUnCov"></span><span class="lineUnCov">	///</span></div>
 <div class="line"><span id="112" class="lineNum"><a href="#112">112</a></span><span class="counterUnCov"></span><span class="lineUnCov">	/// # Examples</span></div>
 <div class="line"><span id="113" class="lineNum"><a href="#113">113</a></span><span class="counterUnCov"></span><span class="lineUnCov">	/// See [`PollFutures::__into_poll_fused`].</span></div>
-<div class="line"><span id="114" class="lineNum"><a href="#114">114</a></span><span class="counterCov">128</span><span class="lineCov">	fn __into_poll_fused(self) -&gt; fused::PollStream&lt;Self&gt;</span></div>
-<div class="line"><span id="115" class="lineNum"><a href="#115">115</a></span><span class="counterCov">128</span><span class="lineCov">	where</span></div>
-<div class="line"><span id="116" class="lineNum"><a href="#116">116</a></span><span class="counterCov">128</span><span class="lineCov">		Self: FusedStream,</span></div>
-<div class="line"><span id="117" class="lineNum"><a href="#117">117</a></span><span class="counterCov">128</span><span class="lineCov">	{</span></div>
-<div class="line"><span id="118" class="lineNum"><a href="#118">118</a></span><span class="counterCov">128</span><span class="lineCov">		fused::PollStream::new(self)</span></div>
-<div class="line"><span id="119" class="lineNum"><a href="#119">119</a></span><span class="counterCov">128</span><span class="lineCov">	}</span></div>
+<div class="line"><span id="114" class="lineNum"><a href="#114">114</a></span><span class="counterCov">192</span><span class="lineCov">	fn __into_poll_fused(self) -&gt; fused::PollStream&lt;Self&gt;</span></div>
+<div class="line"><span id="115" class="lineNum"><a href="#115">115</a></span><span class="counterCov">192</span><span class="lineCov">	where</span></div>
+<div class="line"><span id="116" class="lineNum"><a href="#116">116</a></span><span class="counterCov">192</span><span class="lineCov">		Self: FusedStream,</span></div>
+<div class="line"><span id="117" class="lineNum"><a href="#117">117</a></span><span class="counterCov">192</span><span class="lineCov">	{</span></div>
+<div class="line"><span id="118" class="lineNum"><a href="#118">118</a></span><span class="counterCov">192</span><span class="lineCov">		fused::PollStream::new(self)</span></div>
+<div class="line"><span id="119" class="lineNum"><a href="#119">119</a></span><span class="counterCov">192</span><span class="lineCov">	}</span></div>
 <div class="line"><span id="120" class="lineNum"><a href="#120">120</a></span><span class="counterUnCov"></span><span class="lineUnCov">}</span></div>
 <div class="line"><span id="121" class="lineNum"><a href="#121">121</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
 <div class="line"><span id="122" class="lineNum"><a href="#122">122</a></span><span class="counterUnCov"></span><span class="lineUnCov">impl&lt;S: Stream + Sized&gt; PollStreams for S {}</span></div>
@@ -328,35 +328,75 @@
 <div class="line"><span id="307" class="lineNum"><a href="#307">307</a></span><span class="counterCov">2</span><span class="lineCov">				let mut counter = 0_usize;</span></div>
 <div class="line"><span id="308" class="lineNum"><a href="#308">308</a></span><span class="counterCov">2</span><span class="lineCov"></span></div>
 <div class="line"><span id="309" class="lineNum"><a href="#309">309</a></span><span class="counterCov">42</span><span class="lineCov">				poll_fn(move |_| {</span></div>
-<div class="line"><span id="310" class="lineNum"><a href="#310">310</a></span><span class="counterCov">42</span><span class="lineCov">					let result = match iteration {</span></div>
-<div class="line"><span id="311" class="lineNum"><a href="#311">311</a></span><span class="counterCov">42</span><span class="lineCov">						0..=9 =&gt; Poll::Pending,</span></div>
-<div class="line"><span id="312" class="lineNum"><a href="#312">312</a></span><span class="counterCov">22</span><span class="lineCov">						10..=19 =&gt; {</span></div>
-<div class="line"><span id="313" class="lineNum"><a href="#313">313</a></span><span class="counterCov">20</span><span class="lineCov">							counter += 1;</span></div>
-<div class="line"><span id="314" class="lineNum"><a href="#314">314</a></span><span class="counterCov">20</span><span class="lineCov">							Poll::Ready(Some(counter))</span></div>
-<div class="line"><span id="315" class="lineNum"><a href="#315">315</a></span><span class="counterUnCov"></span><span class="lineUnCov">						}</span></div>
-<div class="line"><span id="316" class="lineNum"><a href="#316">316</a></span><span class="counterCov">2</span><span class="lineCov">						_ =&gt; Poll::Ready(None),</span></div>
-<div class="line"><span id="317" class="lineNum"><a href="#317">317</a></span><span class="counterUnCov"></span><span class="lineUnCov">					};</span></div>
-<div class="line"><span id="318" class="lineNum"><a href="#318">318</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
-<div class="line"><span id="319" class="lineNum"><a href="#319">319</a></span><span class="counterCov">42</span><span class="lineCov">					iteration += 1;</span></div>
-<div class="line"><span id="320" class="lineNum"><a href="#320">320</a></span><span class="counterCov">42</span><span class="lineCov">					result</span></div>
-<div class="line"><span id="321" class="lineNum"><a href="#321">321</a></span><span class="counterCov">42</span><span class="lineCov">				})</span></div>
-<div class="line"><span id="322" class="lineNum"><a href="#322">322</a></span><span class="counterCov">2</span><span class="lineCov">			}</span></div>
-<div class="line"><span id="323" class="lineNum"><a href="#323">323</a></span><span class="counterCov">2</span><span class="lineCov">			.fuse();</span></div>
-<div class="line"><span id="324" class="lineNum"><a href="#324">324</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
-<div class="line"><span id="325" class="lineNum"><a href="#325">325</a></span><span class="counterCov">20</span><span class="lineCov">			while let Some(result) = select![</span></div>
-<div class="line"><span id="326" class="lineNum"><a href="#326">326</a></span><span class="counterCov">20</span><span class="lineCov">				result: &amp;mut stream =&gt; Some(result),</span></div>
-<div class="line"><span id="327" class="lineNum"><a href="#327">327</a></span><span class="counterCov">20</span><span class="lineCov">				r#yield =&gt; r#yield += 1,</span></div>
-<div class="line"><span id="328" class="lineNum"><a href="#328">328</a></span><span class="counterCov">2</span><span class="lineCov">				complete =&gt; None,</span></div>
-<div class="line"><span id="329" class="lineNum"><a href="#329">329</a></span><span class="counterUnCov"></span><span class="lineUnCov">			] {</span></div>
-<div class="line"><span id="330" class="lineNum"><a href="#330">330</a></span><span class="counterCov">20</span><span class="lineCov">				counter += 1;</span></div>
-<div class="line"><span id="331" class="lineNum"><a href="#331">331</a></span><span class="counterCov">20</span><span class="lineCov">				assert_eq!(counter, result);</span></div>
-<div class="line"><span id="332" class="lineNum"><a href="#332">332</a></span><span class="counterUnCov"></span><span class="lineUnCov">			}</span></div>
-<div class="line"><span id="333" class="lineNum"><a href="#333">333</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
-<div class="line"><span id="334" class="lineNum"><a href="#334">334</a></span><span class="counterCov">2</span><span class="lineCov">			assert_eq!(counter, 10);</span></div>
-<div class="line"><span id="335" class="lineNum"><a href="#335">335</a></span><span class="counterNoCov">0</span><span class="lineNoCov">			assert_eq!(r#yield, 10);</span></div>
-<div class="line"><span id="336" class="lineNum"><a href="#336">336</a></span><span class="counterCov">2</span><span class="lineCov">		});</span></div>
-<div class="line"><span id="337" class="lineNum"><a href="#337">337</a></span><span class="counterCov">2</span><span class="lineCov">	}</span></div>
-<div class="line"><span id="338" class="lineNum"><a href="#338">338</a></span><span class="counterUnCov"></span><span class="lineUnCov">}</span></div>
+<div class="line"><span id="310" class="lineNum"><a href="#310">310</a></span><span class="counterCov">42</span><span class="lineCov">					iteration += 1;</span></div>
+<div class="line"><span id="311" class="lineNum"><a href="#311">311</a></span><span class="counterCov">42</span><span class="lineCov"></span></div>
+<div class="line"><span id="312" class="lineNum"><a href="#312">312</a></span><span class="counterCov">42</span><span class="lineCov">					match iteration {</span></div>
+<div class="line"><span id="313" class="lineNum"><a href="#313">313</a></span><span class="counterCov">42</span><span class="lineCov">						1..=10 =&gt; Poll::Pending,</span></div>
+<div class="line"><span id="314" class="lineNum"><a href="#314">314</a></span><span class="counterCov">22</span><span class="lineCov">						11..=20 =&gt; {</span></div>
+<div class="line"><span id="315" class="lineNum"><a href="#315">315</a></span><span class="counterCov">20</span><span class="lineCov">							counter += 1;</span></div>
+<div class="line"><span id="316" class="lineNum"><a href="#316">316</a></span><span class="counterCov">20</span><span class="lineCov">							Poll::Ready(Some(counter))</span></div>
+<div class="line"><span id="317" class="lineNum"><a href="#317">317</a></span><span class="counterUnCov"></span><span class="lineUnCov">						}</span></div>
+<div class="line"><span id="318" class="lineNum"><a href="#318">318</a></span><span class="counterCov">2</span><span class="lineCov">						_ =&gt; Poll::Ready(None),</span></div>
+<div class="line"><span id="319" class="lineNum"><a href="#319">319</a></span><span class="counterUnCov"></span><span class="lineUnCov">					}</span></div>
+<div class="line"><span id="320" class="lineNum"><a href="#320">320</a></span><span class="counterCov">42</span><span class="lineCov">				})</span></div>
+<div class="line"><span id="321" class="lineNum"><a href="#321">321</a></span><span class="counterCov">2</span><span class="lineCov">			}</span></div>
+<div class="line"><span id="322" class="lineNum"><a href="#322">322</a></span><span class="counterCov">2</span><span class="lineCov">			.fuse();</span></div>
+<div class="line"><span id="323" class="lineNum"><a href="#323">323</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
+<div class="line"><span id="324" class="lineNum"><a href="#324">324</a></span><span class="counterCov">20</span><span class="lineCov">			while let Some(result) = select![</span></div>
+<div class="line"><span id="325" class="lineNum"><a href="#325">325</a></span><span class="counterCov">20</span><span class="lineCov">				result: &amp;mut stream =&gt; Some(result),</span></div>
+<div class="line"><span id="326" class="lineNum"><a href="#326">326</a></span><span class="counterCov">20</span><span class="lineCov">				r#yield =&gt; r#yield += 1,</span></div>
+<div class="line"><span id="327" class="lineNum"><a href="#327">327</a></span><span class="counterCov">2</span><span class="lineCov">				complete =&gt; None,</span></div>
+<div class="line"><span id="328" class="lineNum"><a href="#328">328</a></span><span class="counterUnCov"></span><span class="lineUnCov">			] {</span></div>
+<div class="line"><span id="329" class="lineNum"><a href="#329">329</a></span><span class="counterCov">20</span><span class="lineCov">				counter += 1;</span></div>
+<div class="line"><span id="330" class="lineNum"><a href="#330">330</a></span><span class="counterCov">20</span><span class="lineCov">				assert_eq!(counter, result);</span></div>
+<div class="line"><span id="331" class="lineNum"><a href="#331">331</a></span><span class="counterUnCov"></span><span class="lineUnCov">			}</span></div>
+<div class="line"><span id="332" class="lineNum"><a href="#332">332</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
+<div class="line"><span id="333" class="lineNum"><a href="#333">333</a></span><span class="counterCov">2</span><span class="lineCov">			assert_eq!(counter, 10);</span></div>
+<div class="line"><span id="334" class="lineNum"><a href="#334">334</a></span><span class="counterNoCov">0</span><span class="lineNoCov">			assert_eq!(r#yield, 10);</span></div>
+<div class="line"><span id="335" class="lineNum"><a href="#335">335</a></span><span class="counterCov">2</span><span class="lineCov">		});</span></div>
+<div class="line"><span id="336" class="lineNum"><a href="#336">336</a></span><span class="counterCov">2</span><span class="lineCov">	}</span></div>
+<div class="line"><span id="337" class="lineNum"><a href="#337">337</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
+<div class="line"><span id="338" class="lineNum"><a href="#338">338</a></span><span class="counterUnCov"></span><span class="lineUnCov">	#[test]</span></div>
+<div class="line"><span id="339" class="lineNum"><a href="#339">339</a></span><span class="counterCov">2</span><span class="lineCov">	fn select_yield_2() {</span></div>
+<div class="line"><span id="340" class="lineNum"><a href="#340">340</a></span><span class="counterCov">2</span><span class="lineCov">		block_on(async {</span></div>
+<div class="line"><span id="341" class="lineNum"><a href="#341">341</a></span><span class="counterCov">2</span><span class="lineCov">			let mut counter = 0;</span></div>
+<div class="line"><span id="342" class="lineNum"><a href="#342">342</a></span><span class="counterCov">2</span><span class="lineCov">			let mut r#yield = 0_usize;</span></div>
+<div class="line"><span id="343" class="lineNum"><a href="#343">343</a></span><span class="counterCov">2</span><span class="lineCov"></span></div>
+<div class="line"><span id="344" class="lineNum"><a href="#344">344</a></span><span class="counterCov">2</span><span class="lineCov">			let mut stream1 = {</span></div>
+<div class="line"><span id="345" class="lineNum"><a href="#345">345</a></span><span class="counterCov">2</span><span class="lineCov">				let mut iteration = 0_usize;</span></div>
+<div class="line"><span id="346" class="lineNum"><a href="#346">346</a></span><span class="counterCov">2</span><span class="lineCov">				let mut counter = 10_usize;</span></div>
+<div class="line"><span id="347" class="lineNum"><a href="#347">347</a></span><span class="counterCov">2</span><span class="lineCov"></span></div>
+<div class="line"><span id="348" class="lineNum"><a href="#348">348</a></span><span class="counterCov">42</span><span class="lineCov">				poll_fn(move |_| {</span></div>
+<div class="line"><span id="349" class="lineNum"><a href="#349">349</a></span><span class="counterCov">42</span><span class="lineCov">					iteration += 1;</span></div>
+<div class="line"><span id="350" class="lineNum"><a href="#350">350</a></span><span class="counterCov">42</span><span class="lineCov"></span></div>
+<div class="line"><span id="351" class="lineNum"><a href="#351">351</a></span><span class="counterCov">42</span><span class="lineCov">					match iteration {</span></div>
+<div class="line"><span id="352" class="lineNum"><a href="#352">352</a></span><span class="counterCov">42</span><span class="lineCov">						1..=10 =&gt; Poll::Pending,</span></div>
+<div class="line"><span id="353" class="lineNum"><a href="#353">353</a></span><span class="counterCov">22</span><span class="lineCov">						11..=20 =&gt; {</span></div>
+<div class="line"><span id="354" class="lineNum"><a href="#354">354</a></span><span class="counterCov">20</span><span class="lineCov">							counter += 1;</span></div>
+<div class="line"><span id="355" class="lineNum"><a href="#355">355</a></span><span class="counterCov">20</span><span class="lineCov">							Poll::Ready(Some(counter))</span></div>
+<div class="line"><span id="356" class="lineNum"><a href="#356">356</a></span><span class="counterUnCov"></span><span class="lineUnCov">						}</span></div>
+<div class="line"><span id="357" class="lineNum"><a href="#357">357</a></span><span class="counterCov">2</span><span class="lineCov">						_ =&gt; Poll::Ready(None),</span></div>
+<div class="line"><span id="358" class="lineNum"><a href="#358">358</a></span><span class="counterUnCov"></span><span class="lineUnCov">					}</span></div>
+<div class="line"><span id="359" class="lineNum"><a href="#359">359</a></span><span class="counterCov">42</span><span class="lineCov">				})</span></div>
+<div class="line"><span id="360" class="lineNum"><a href="#360">360</a></span><span class="counterCov">2</span><span class="lineCov">			}</span></div>
+<div class="line"><span id="361" class="lineNum"><a href="#361">361</a></span><span class="counterCov">2</span><span class="lineCov">			.fuse();</span></div>
+<div class="line"><span id="362" class="lineNum"><a href="#362">362</a></span><span class="counterCov">2</span><span class="lineCov">			let mut stream2 = iter(1..=10).fuse();</span></div>
+<div class="line"><span id="363" class="lineNum"><a href="#363">363</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
+<div class="line"><span id="364" class="lineNum"><a href="#364">364</a></span><span class="counterCov">40</span><span class="lineCov">			while let Some(result) = select![</span></div>
+<div class="line"><span id="365" class="lineNum"><a href="#365">365</a></span><span class="counterCov">20</span><span class="lineCov">				result: &amp;mut stream1 =&gt; Some(result),</span></div>
+<div class="line"><span id="366" class="lineNum"><a href="#366">366</a></span><span class="counterCov">20</span><span class="lineCov">				result: &amp;mut stream2 =&gt; Some(result),</span></div>
+<div class="line"><span id="367" class="lineNum"><a href="#367">367</a></span><span class="counterNoCov">0</span><span class="lineNoCov">				r#yield =&gt; r#yield += 1,</span></div>
+<div class="line"><span id="368" class="lineNum"><a href="#368">368</a></span><span class="counterCov">2</span><span class="lineCov">				complete =&gt; None,</span></div>
+<div class="line"><span id="369" class="lineNum"><a href="#369">369</a></span><span class="counterUnCov"></span><span class="lineUnCov">			] {</span></div>
+<div class="line"><span id="370" class="lineNum"><a href="#370">370</a></span><span class="counterCov">40</span><span class="lineCov">				counter += 1;</span></div>
+<div class="line"><span id="371" class="lineNum"><a href="#371">371</a></span><span class="counterCov">40</span><span class="lineCov">				assert_eq!(counter, result);</span></div>
+<div class="line"><span id="372" class="lineNum"><a href="#372">372</a></span><span class="counterUnCov"></span><span class="lineUnCov">			}</span></div>
+<div class="line"><span id="373" class="lineNum"><a href="#373">373</a></span><span class="counterUnCov"></span><span class="lineUnCov"></span></div>
+<div class="line"><span id="374" class="lineNum"><a href="#374">374</a></span><span class="counterCov">2</span><span class="lineCov">			assert_eq!(counter, 20);</span></div>
+<div class="line"><span id="375" class="lineNum"><a href="#375">375</a></span><span class="counterNoCov">0</span><span class="lineNoCov">			assert_eq!(r#yield, 0);</span></div>
+<div class="line"><span id="376" class="lineNum"><a href="#376">376</a></span><span class="counterCov">2</span><span class="lineCov">		});</span></div>
+<div class="line"><span id="377" class="lineNum"><a href="#377">377</a></span><span class="counterCov">2</span><span class="lineCov">	}</span></div>
+<div class="line"><span id="378" class="lineNum"><a href="#378">378</a></span><span class="counterUnCov"></span><span class="lineUnCov">}</span></div>
 </div>
 </body>
 </html>
