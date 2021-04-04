@@ -1,0 +1,1 @@
+initSidebarItems({"macro":[["select","Polls all passed `Future`s or `Stream`s until one is ready and returns it. Prioritizes by order."]]});

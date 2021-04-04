@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Polls all passed `Future`s or `Stream`s until one is ready and returns it. Prioritizes by order."><meta name="keywords" content="rust, rustlang, rust-lang, select"><title>allochronic_util_macros::select - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><script src="../crates.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc macro"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../allochronic_util_macros/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><div class="sidebar-elems"><p class="location"><a href="index.html">allochronic_util_macros</a></p><div id="sidebar-vars" data-name="select" data-ty="macro" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Macro <a href="index.html">allochronic_util_macros</a>::<wbr><a class="macro" href="">select</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/allochronic_util_macros/lib.rs.html#136-138" title="goto source code">[src]</a></span></h1><pre class="rust macro">select!() { /* proc-macro */ }</pre><div class="docblock"><p>Polls all passed <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html"><code>Future</code></a>s or
+<a href="https://doc.rust-lang.org/nightly/core/stream/stream/trait.Stream.html"><code>Stream</code></a>s until one is ready and returns
+it. Prioritizes by order.</p>
+<h1 id="raw-mode" class="section-header"><a href="#raw-mode">Raw-mode</a></h1>
+<p>If the <code>complete</code> item is unspecified, <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html"><code>Future</code></a>s and
+<a href="https://doc.rust-lang.org/nightly/core/stream/stream/trait.Stream.html"><code>Stream</code></a>s will be pulled beyond exhaustion. If a high
+priority item is exhausted and <a href="../allochronic_util_macros/macro.select.html"><code>select!</code></a> is being used in
+a loop, it will continuously return the same result, which might be
+unintended.</p>
+<h1 id="fused-mode" class="section-header"><a href="#fused-mode">Fused-mode</a></h1>
+<p>If the <code>complete</code> item is specified, all polled items have to implement
+<code>FusedFuture</code> or <code>FusedStream</code>, for <a href="https://doc.rust-lang.org/nightly/core/stream/stream/trait.Stream.html"><code>Stream</code></a>s this
+will unwrap the <a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="Option"><code>Option</code></a>. The <code>complete</code> item will be executed once all
+items have been exhausted. Items will not be pulled beyond exhaustion.</p>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
+<p>Raw-mode:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>;
+<span class="kw">use</span> <span class="ident">allochronic_util</span>::<span class="ident">select</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream1</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">1</span>..<span class="op">=</span><span class="number">3</span>);
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream2</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">4</span>..<span class="op">=</span><span class="number">6</span>);
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream3</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">7</span>..<span class="op">=</span><span class="number">9</span>);
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counter</span> <span class="op">=</span> <span class="number">0</span>;
+
+<span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>) <span class="op">=</span> <span class="macro">select</span><span class="macro">!</span>[
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>,
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>,
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream3</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>,
+] {
+	<span class="ident">counter</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+	<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">counter</span>, <span class="ident">result</span>);
+}
+
+<span class="comment">// this loop will only reach the number of three, because it will abort after the first stream</span>
+<span class="comment">// is exhausted</span>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">counter</span>, <span class="number">3</span>);</pre></div>
+<p>Fused-mode:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{<span class="self">self</span>, <span class="ident">StreamExt</span>};
+<span class="kw">use</span> <span class="ident">allochronic_util</span>::<span class="ident">select</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream1</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">1</span>..<span class="op">=</span><span class="number">3</span>).<span class="ident">fuse</span>();
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream2</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">4</span>..<span class="op">=</span><span class="number">6</span>).<span class="ident">fuse</span>();
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream3</span> <span class="op">=</span> <span class="ident">stream</span>::<span class="ident">iter</span>(<span class="number">7</span>..<span class="op">=</span><span class="number">9</span>).<span class="ident">fuse</span>();
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counter</span> <span class="op">=</span> <span class="number">0</span>;
+
+<span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>) <span class="op">=</span> <span class="macro">select</span><span class="macro">!</span>[
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>),
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>),
+	<span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stream3</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>),
+	<span class="ident">complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+] {
+	<span class="ident">counter</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+	<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">counter</span>, <span class="ident">result</span>);
+}
+
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">counter</span>, <span class="number">9</span>);</pre></div>
+</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="allochronic_util_macros" data-search-js="../search-index.js"></div>
+    <script src="../main.js"></script></body></html>
