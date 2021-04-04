@@ -103,5 +103,5 @@ jobs:
 
       - name: Prettier
         run: |
-          npm install -g prettier prettier-plugin-toml
+          sudo npm install -g prettier prettier-plugin-toml
           npx prettier -l .
