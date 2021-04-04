@@ -4,7 +4,6 @@ version = "0.0.0-reserve"
 description = "reserved crate"
 license = "MIT OR Apache-2.0"
 edition = "2018"
-resolver = "2"
 
 [dependencies]
 macros = { package = "allochronic-util-macros", path = "macros" }

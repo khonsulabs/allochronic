@@ -6,7 +6,6 @@
 	clippy::restriction,
 	future_incompatible,
 	rust_2018_idioms,
-	rustdoc::all
 )]
 #![warn(
 	box_pointers,
@@ -42,12 +41,15 @@
 	clippy::tabs_in_doc_comments,
 	clippy::unreachable,
 	clippy::wildcard_enum_match_arm,
-	rustdoc::missing_doc_code_examples,
-	rustdoc::private_doc_tests,
 	unreachable_pub,
 	variant_size_differences
 )]
 #![allow(clippy::cargo_common_metadata)]
+#![cfg_attr(
+	doc,
+	warn(rustdoc::all),
+	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests,)
+)]
 
 //! TODO
 
