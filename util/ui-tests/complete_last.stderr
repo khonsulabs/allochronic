@@ -1,0 +1,5 @@
+error: `complete` needs to be the last item
+ --> $DIR/complete_last.rs:9:13
+  |
+9 |             complete => return,
+  |             ^^^^^^^^

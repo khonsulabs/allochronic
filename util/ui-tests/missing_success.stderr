@@ -1,0 +1,9 @@
+error: unexpected end of input, expected expression
+  --> $DIR/missing_success.rs:8:9
+   |
+8  | /         allochronic_util::select![
+9  | |             test: future =>
+10 | |         ]
+   | |_________^
+   |
+   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)

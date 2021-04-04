@@ -1,0 +1,5 @@
+error: `package` needs to be the first item
+  --> $DIR/package_first.rs:10:13
+   |
+10 |             package => allochronic_util,
+   |             ^^^^^^^

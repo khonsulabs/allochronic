@@ -1,0 +1,9 @@
+error: `select!` can't be empty
+ --> $DIR/package_only.rs:3:9
+  |
+3 | /         allochronic_util::select![
+4 | |             package => allochronic_util,
+5 | |         ]
+  | |_________^
+  |
+  = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)

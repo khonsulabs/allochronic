@@ -1,0 +1,7 @@
+error: `select!` can't be empty
+ --> $DIR/empty.rs:3:9
+  |
+3 |         allochronic_util::select!()
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)

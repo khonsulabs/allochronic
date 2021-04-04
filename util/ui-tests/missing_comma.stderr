@@ -1,0 +1,5 @@
+error: missing a comma between items
+  --> $DIR/missing_comma.rs:10:13
+   |
+10 |             test
+   |             ^^^^
