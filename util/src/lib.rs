@@ -47,6 +47,7 @@
 	unreachable_pub,
 	variant_size_differences
 )]
+#![allow(clippy::cargo_common_metadata)]
 
 //! TODO
 

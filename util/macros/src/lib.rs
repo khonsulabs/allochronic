@@ -46,6 +46,7 @@
 	rustdoc::private_doc_tests,
 	variant_size_differences
 )]
+#![allow(clippy::cargo_common_metadata)]
 
 //! Proc-Macros for the `allochronic-util` crate.
 

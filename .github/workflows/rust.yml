@@ -23,11 +23,11 @@ jobs:
 
       - name: Run clippy
         run: |
-          cargo clippy
+          cargo clippy --workspace --all-targets
 
       - name: Run default features unit tests
         run: |
-          cargo test
+          cargo test --workspace --all-targets
 
   docs:
     runs-on: ubuntu-latest

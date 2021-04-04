@@ -119,7 +119,6 @@ impl Parse for Items {
 
 /// See [`select`](crate::select!).
 pub(crate) fn select(item: TokenStream1) -> TokenStream1 {
-	#[allow(clippy::unneeded_field_pattern)]
 	let Items {
 		package,
 		items,
