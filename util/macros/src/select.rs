@@ -46,7 +46,7 @@ impl Parse for Items {
 					package,
 					items,
 					complete,
-				})
+				});
 			};
 
 			// if the next token isn't a ":" it could be the `complete` or `package` item
@@ -67,7 +67,7 @@ impl Parse for Items {
 
 					// the next token is only allowed to be a "," as a separator between items
 					if input.parse::<Option<Token![,]>>()?.is_none() && !input.is_empty() {
-						break Err(Error::new(input.span(), "missing a comma between items"))
+						break Err(Error::new(input.span(), "missing a comma between items"));
 					}
 				}
 				// if the next item is `complete`, the token afterwards has to be "=>"
@@ -91,7 +91,7 @@ impl Parse for Items {
 							var.span(),
 							"`complete` needs to be the last item",
 						))
-					}
+					};
 				}
 				// if the next item is `package`, the token afterwards has to be "=>"
 				Err(_)
@@ -107,7 +107,7 @@ impl Parse for Items {
 						break Err(Error::new(
 							var.span(),
 							"`package` needs to be the first item",
-						))
+						));
 					}
 				}
 				// otherwise, it was just the wrong token
@@ -126,7 +126,7 @@ pub(crate) fn select(item: TokenStream1) -> TokenStream1 {
 	} = syn::parse_macro_input!(item);
 
 	if items.is_empty() {
-		return crate::error(Span::call_site(), "`select!` can't be empty")
+		return crate::error(Span::call_site(), "`select!` can't be empty");
 	}
 
 	if let Some(complete) = complete {

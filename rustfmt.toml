@@ -19,6 +19,7 @@ overflow_delimited_expr = true
 reorder_impl_items = true
 # not compatible with stable
 #struct_field_align_threshold = 50
-trailing_semicolon = false
+# not compatible with stable
+#trailing_semicolon = false
 use_field_init_shorthand = true
 wrap_comments = true
