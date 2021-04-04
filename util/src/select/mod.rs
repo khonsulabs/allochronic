@@ -307,17 +307,16 @@ mod test {
 				let mut counter = 0_usize;
 
 				poll_fn(move |_| {
-					let result = match iteration {
-						0..=9 => Poll::Pending,
-						10..=19 => {
+					iteration += 1;
+
+					match iteration {
+						1..=10 => Poll::Pending,
+						11..=20 => {
 							counter += 1;
 							Poll::Ready(Some(counter))
 						}
 						_ => Poll::Ready(None),
-					};
-
-					iteration += 1;
-					result
+					}
 				})
 			}
 			.fuse();
@@ -333,6 +332,47 @@ mod test {
 
 			assert_eq!(counter, 10);
 			assert_eq!(r#yield, 10);
+		});
+	}
+
+	#[test]
+	fn select_yield_2() {
+		block_on(async {
+			let mut counter = 0;
+			let mut r#yield = 0_usize;
+
+			let mut stream1 = {
+				let mut iteration = 0_usize;
+				let mut counter = 10_usize;
+
+				poll_fn(move |_| {
+					iteration += 1;
+
+					match iteration {
+						1..=10 => Poll::Pending,
+						11..=20 => {
+							counter += 1;
+							Poll::Ready(Some(counter))
+						}
+						_ => Poll::Ready(None),
+					}
+				})
+			}
+			.fuse();
+			let mut stream2 = iter(1..=10).fuse();
+
+			while let Some(result) = select![
+				result: &mut stream1 => Some(result),
+				result: &mut stream2 => Some(result),
+				r#yield => r#yield += 1,
+				complete => None,
+			] {
+				counter += 1;
+				assert_eq!(counter, result);
+			}
+
+			assert_eq!(counter, 20);
+			assert_eq!(r#yield, 0);
 		});
 	}
 }
