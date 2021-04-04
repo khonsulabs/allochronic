@@ -5,7 +5,7 @@
 	clippy::pedantic,
 	clippy::restriction,
 	future_incompatible,
-	rust_2018_idioms,
+	rust_2018_idioms
 )]
 #![warn(
 	box_pointers,
