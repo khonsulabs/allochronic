@@ -5,8 +5,7 @@
 	clippy::pedantic,
 	clippy::restriction,
 	future_incompatible,
-	rust_2018_idioms,
-	rustdoc::all
+	rust_2018_idioms
 )]
 #![warn(
 	box_pointers,
@@ -42,11 +41,14 @@
 	clippy::tabs_in_doc_comments,
 	clippy::unreachable,
 	clippy::wildcard_enum_match_arm,
-	rustdoc::missing_doc_code_examples,
-	rustdoc::private_doc_tests,
 	variant_size_differences
 )]
 #![allow(clippy::cargo_common_metadata)]
+#![cfg_attr(
+	doc,
+	warn(rustdoc::all),
+	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests,)
+)]
 
 //! Proc-Macros for the `allochronic-util` crate.
 
