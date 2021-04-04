@@ -48,7 +48,7 @@
 #![cfg_attr(
 	doc,
 	warn(rustdoc::all),
-	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests,)
+	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests)
 )]
 
 //! TODO

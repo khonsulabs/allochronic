@@ -39,7 +39,8 @@ jobs:
 
       - name: Generate Docs
         run: |
-          cargo doc --no-deps --workspace --all-features
+          rustup install nightly
+          cargo +nightly doc --no-deps --workspace --all-features
 
       - name: Deploy Docs
         uses: JamesIves/github-pages-deploy-action@releases/v4
