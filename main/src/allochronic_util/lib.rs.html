@@ -67,10 +67,10 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">unsafe_code</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
-	<span class="ident">clippy</span>::<span class="ident">cargo</span>,
-	<span class="ident">clippy</span>::<span class="ident">nursery</span>,
-	<span class="ident">clippy</span>::<span class="ident">pedantic</span>,
-	<span class="ident">clippy</span>::<span class="ident">restriction</span>,
+	<span class="ident">clippy::cargo</span>,
+	<span class="ident">clippy::nursery</span>,
+	<span class="ident">clippy::pedantic</span>,
+	<span class="ident">clippy::restriction</span>,
 	<span class="ident">future_incompatible</span>,
 	<span class="ident">rust_2018_idioms</span>
 )]</span>
@@ -95,27 +95,27 @@
 	<span class="ident">variant_size_differences</span>
 )]</span>
 <span class="attribute">#![<span class="ident">allow</span>(
-	<span class="ident">clippy</span>::<span class="ident">blanket_clippy_restriction_lints</span>,
-	<span class="ident">clippy</span>::<span class="ident">else_if_without_else</span>,
-	<span class="ident">clippy</span>::<span class="ident">exhaustive_enums</span>,
-	<span class="ident">clippy</span>::<span class="ident">future_not_send</span>,
-	<span class="ident">clippy</span>::<span class="ident">implicit_return</span>,
-	<span class="ident">clippy</span>::<span class="ident">missing_inline_in_public_items</span>,
-	<span class="ident">clippy</span>::<span class="ident">non_ascii_literal</span>,
-	<span class="ident">clippy</span>::<span class="ident">pattern_type_mismatch</span>,
-	<span class="ident">clippy</span>::<span class="ident">redundant_pub_crate</span>,
-	<span class="ident">clippy</span>::<span class="ident">shadow_reuse</span>,
-	<span class="ident">clippy</span>::<span class="ident">tabs_in_doc_comments</span>,
-	<span class="ident">clippy</span>::<span class="ident">unreachable</span>,
-	<span class="ident">clippy</span>::<span class="ident">wildcard_enum_match_arm</span>,
+	<span class="ident">clippy::blanket_clippy_restriction_lints</span>,
+	<span class="ident">clippy::else_if_without_else</span>,
+	<span class="ident">clippy::exhaustive_enums</span>,
+	<span class="ident">clippy::future_not_send</span>,
+	<span class="ident">clippy::implicit_return</span>,
+	<span class="ident">clippy::missing_inline_in_public_items</span>,
+	<span class="ident">clippy::non_ascii_literal</span>,
+	<span class="ident">clippy::pattern_type_mismatch</span>,
+	<span class="ident">clippy::redundant_pub_crate</span>,
+	<span class="ident">clippy::shadow_reuse</span>,
+	<span class="ident">clippy::tabs_in_doc_comments</span>,
+	<span class="ident">clippy::unreachable</span>,
+	<span class="ident">clippy::wildcard_enum_match_arm</span>,
 	<span class="ident">unreachable_pub</span>,
 	<span class="ident">variant_size_differences</span>
 )]</span>
-<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">cargo_common_metadata</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::cargo_common_metadata</span>)]</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(
 	<span class="ident">doc</span>,
-	<span class="ident">warn</span>(<span class="ident">rustdoc</span>::<span class="ident">all</span>),
-	<span class="ident">allow</span>(<span class="ident">rustdoc</span>::<span class="ident">missing_doc_code_examples</span>, <span class="ident">rustdoc</span>::<span class="ident">private_doc_tests</span>)
+	<span class="ident">warn</span>(<span class="ident">rustdoc::all</span>),
+	<span class="ident">allow</span>(<span class="ident">rustdoc::missing_doc_code_examples</span>, <span class="ident">rustdoc::private_doc_tests</span>)
 )]</span>
 
 <span class="doccomment">//! TODO</span>
@@ -127,7 +127,7 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll_once</span>::{<span class="ident">poll</span>, <span class="ident">PollOnce</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">r#yield</span>::{<span class="ident">r#yield</span>, <span class="ident">Yield</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">select</span>::<span class="ident">select</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">select::select</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="allochronic_util" data-search-js="../../search-index.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

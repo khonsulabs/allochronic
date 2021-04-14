@@ -241,12 +241,12 @@
 <span class="doccomment">//! [`Future`](std::future::Future)s when they are resolved but not picked due</span>
 <span class="doccomment">//! to priority.</span>
 
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> <span class="kw">as</span> <span class="ident">TokenStream1</span>;
+<span class="kw">use</span> <span class="ident">proc_macro::TokenStream</span> <span class="kw">as</span> <span class="ident">TokenStream1</span>;
 <span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">Span</span>, <span class="ident">TokenStream</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote</span>, <span class="ident">ToTokens</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::{
 	<span class="ident">parse</span>::{<span class="ident">Parse</span>, <span class="ident">ParseStream</span>},
-	<span class="ident">spanned</span>::<span class="ident">Spanned</span>,
+	<span class="ident">spanned::Spanned</span>,
 	<span class="ident">Error</span>, <span class="ident">Expr</span>, <span class="ident">Pat</span>, <span class="ident">Path</span>, <span class="ident">Token</span>,
 };
 
@@ -276,9 +276,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Parse</span> <span class="kw">for</span> <span class="ident">Items</span> {
-	<span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">package</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> { <span class="ident">allochronic_util</span> };
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+	<span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn::Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">package</span> <span class="op">=</span> <span class="macro">quote!</span> { <span class="ident">allochronic_util</span> };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">complete</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;test&quot;</span>)]</span>
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r#yield</span> <span class="op">=</span> <span class="prelude-val">None</span>;
@@ -297,13 +297,13 @@
 			};
 
 			<span class="comment">// if the next token isn&#39;t a &quot;:&quot; it could be the `complete` or `package` item</span>
-			<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[:]<span class="op">&gt;</span>();
+			<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token!</span>[:]<span class="op">&gt;</span>();
 
 			<span class="kw">match</span> <span class="ident">result</span> {
 				<span class="comment">// we found a &quot;:&quot; token, continue like intended</span>
 				<span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
 					<span class="kw">let</span> <span class="ident">future</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
-					<span class="kw">let</span> <span class="kw">_</span>: <span class="macro">Token</span><span class="macro">!</span>[<span class="op">=</span><span class="op">&gt;</span>] <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
+					<span class="kw">let</span> <span class="kw">_</span>: <span class="macro">Token!</span>[<span class="op">=</span><span class="op">&gt;</span>] <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 					<span class="kw">let</span> <span class="ident">success</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 
 					<span class="ident">items</span>.<span class="ident">push</span>(<span class="ident">Item</span> {
@@ -313,18 +313,18 @@
 					});
 
 					<span class="comment">// the next token is only allowed to be a &quot;,&quot; as a separator between items</span>
-					<span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">is_none</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_empty</span>() {
-						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">input</span>.<span class="ident">span</span>(), <span class="string">&quot;missing a comma between items&quot;</span>));
+					<span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token!</span>[,]<span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">is_none</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_empty</span>() {
+						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">input</span>.<span class="ident">span</span>(), <span class="string">&quot;missing a comma between items&quot;</span>));
 					}
 				}
 				<span class="comment">// if the next item is `complete`, the token afterwards has to be &quot;=&gt;&quot;</span>
 				<span class="prelude-val">Err</span>(<span class="kw">_</span>)
 					<span class="kw">if</span> <span class="ident">var</span>.<span class="ident">to_token_stream</span>().<span class="ident">to_string</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&quot;complete&quot;</span>
-						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
+						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
 				{
 					<span class="ident">complete</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>);
 					<span class="comment">// a trailing &quot;,&quot; token is no problem</span>
-					<span class="kw">let</span> <span class="kw">_</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
+					<span class="kw">let</span> <span class="kw">_</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token!</span>[,]<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 
 					<span class="comment">// but nothing is allowed to come afterwards</span>
 					<span class="kw">break</span> <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_empty</span>() {
@@ -336,7 +336,7 @@
 							<span class="ident">r#yield</span>,
 						})
 					} <span class="kw">else</span> {
-						<span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(
+						<span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
 							<span class="ident">var</span>.<span class="ident">span</span>(),
 							<span class="string">&quot;`complete` needs to be the last item&quot;</span>,
 						))
@@ -345,15 +345,15 @@
 				<span class="comment">// if the next item is `package`, the token afterwards has to be &quot;=&gt;&quot;</span>
 				<span class="prelude-val">Err</span>(<span class="kw">_</span>)
 					<span class="kw">if</span> <span class="ident">var</span>.<span class="ident">to_token_stream</span>().<span class="ident">to_string</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&quot;package&quot;</span>
-						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
+						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
 				{
 					<span class="ident">package</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">into_token_stream</span>();
 					<span class="comment">// a trailing &quot;,&quot; token is no problem</span>
-					<span class="kw">let</span> <span class="kw">_</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
+					<span class="kw">let</span> <span class="kw">_</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token!</span>[,]<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 
 					<span class="comment">// but nothing is allowed to come before</span>
 					<span class="kw">if</span> <span class="op">!</span><span class="ident">items</span>.<span class="ident">is_empty</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">complete</span>.<span class="ident">is_some</span>() {
-						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(
+						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
 							<span class="ident">var</span>.<span class="ident">span</span>(),
 							<span class="string">&quot;`package` needs to be the first item&quot;</span>,
 						));
@@ -363,13 +363,13 @@
 				<span class="comment">// if the next item is `yield`, the token afterwards has to be &quot;=&gt;&quot;</span>
 				<span class="prelude-val">Err</span>(<span class="kw">_</span>)
 					<span class="kw">if</span> <span class="ident">var</span>.<span class="ident">to_token_stream</span>().<span class="ident">to_string</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&quot;r#yield&quot;</span>
-						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
+						<span class="op">&amp;&amp;</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token!</span>[<span class="op">=</span><span class="op">&gt;</span>]<span class="op">&gt;</span>().<span class="ident">is_ok</span>() <span class="op">=</span><span class="op">&gt;</span>
 				{
 					<span class="ident">r#yield</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>);
 
 					<span class="comment">// the next token is only allowed to be a &quot;,&quot; as a separator between items</span>
-					<span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">is_none</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_empty</span>() {
-						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">input</span>.<span class="ident">span</span>(), <span class="string">&quot;missing a comma between items&quot;</span>));
+					<span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token!</span>[,]<span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">is_none</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_empty</span>() {
+						<span class="kw">break</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">input</span>.<span class="ident">span</span>(), <span class="string">&quot;missing a comma between items&quot;</span>));
 					}
 				}
 				<span class="comment">// otherwise, it was just the wrong token</span>
@@ -381,25 +381,25 @@
 
 <span class="doccomment">/// See [`select`](crate::select!).</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">select</span>(<span class="ident">item</span>: <span class="ident">TokenStream1</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TokenStream1</span> {
-	<span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Items</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="macro">parse_macro_input</span><span class="macro">!</span>(<span class="ident">item</span>);
+	<span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Items</span> <span class="op">=</span> <span class="macro">syn::parse_macro_input!</span>(<span class="ident">item</span>);
 
 	<span class="kw">let</span> <span class="ident">package</span> <span class="op">=</span> <span class="ident">items</span>.<span class="ident">package</span>;
 	<span class="kw">let</span> <span class="ident">complete</span> <span class="op">=</span> <span class="ident">items</span>.<span class="ident">complete</span>;
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;test&quot;</span>)]</span>
 	<span class="kw">let</span> <span class="ident">r#yield</span> <span class="op">=</span> {
 		<span class="kw">let</span> <span class="ident">r#yield</span> <span class="op">=</span> <span class="ident">items</span>.<span class="ident">r#yield</span>;
-		<span class="macro">quote</span><span class="macro">!</span> { #<span class="ident">r#yield</span>; }
+		<span class="macro">quote!</span> { #<span class="ident">r#yield</span>; }
 	};
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;test&quot;</span>))]</span>
-	<span class="kw">let</span> <span class="ident">r#yield</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {};
+	<span class="kw">let</span> <span class="ident">r#yield</span> <span class="op">=</span> <span class="macro">quote!</span> {};
 	<span class="kw">let</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">items</span>.<span class="ident">items</span>;
 
 	<span class="kw">if</span> <span class="ident">items</span>.<span class="ident">is_empty</span>() {
-		<span class="kw">return</span> <span class="kw">crate</span>::<span class="ident">error</span>(<span class="ident">Span</span>::<span class="ident">call_site</span>(), <span class="string">&quot;`select!` can&#39;t be empty&quot;</span>);
+		<span class="kw">return</span> <span class="kw">crate</span><span class="ident">::error</span>(<span class="ident">Span::call_site</span>(), <span class="string">&quot;`select!` can&#39;t be empty&quot;</span>);
 	}
 
 	<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">complete</span>) <span class="op">=</span> <span class="ident">complete</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">TokenStream</span>::<span class="ident">new</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">TokenStream::new</span>();
 
 		<span class="kw">for</span> <span class="ident">Item</span> {
 			<span class="ident">var</span>,
@@ -407,20 +407,20 @@
 			<span class="ident">success</span>,
 		} <span class="kw">in</span> <span class="ident">items</span>
 		{
-			<span class="ident">stream</span>.<span class="ident">extend</span>(<span class="macro">quote</span><span class="macro">!</span> {
+			<span class="ident">stream</span>.<span class="ident">extend</span>(<span class="macro">quote!</span> {
 				<span class="kw">match</span> (#<span class="ident">future</span>).<span class="ident">__into_poll_fused</span>().<span class="kw">await</span> {
-					::<span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(#<span class="ident">var</span>)) <span class="op">=</span><span class="op">&gt;</span> {
-						<span class="kw">break</span> ::<span class="ident">std</span>::<span class="ident">option</span>::<span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(#<span class="ident">success</span>)
+					<span class="ident">::std::task::Poll::Ready</span>(<span class="prelude-val">Some</span>(#<span class="ident">var</span>)) <span class="op">=</span><span class="op">&gt;</span> {
+						<span class="kw">break</span> <span class="ident">::std::option::Option::Some</span>(#<span class="ident">success</span>)
 					}
-					::<span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> (),
-					::<span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">__complete</span> <span class="op">=</span> <span class="bool-val">false</span>,
+					<span class="ident">::std::task::Poll::Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> (),
+					<span class="ident">::std::task::Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">__complete</span> <span class="op">=</span> <span class="bool-val">false</span>,
 				}
 			});
 		}
 
-		(<span class="macro">quote</span><span class="macro">!</span> {
+		(<span class="macro">quote!</span> {
 			{
-				<span class="kw">use</span> ::#<span class="ident">package</span>::<span class="ident">select</span>::{<span class="ident">PollFutures</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">PollStreams</span> <span class="kw">as</span> <span class="kw">_</span>};
+				<span class="kw">use</span> ::#<span class="ident">package::select</span>::{<span class="ident">PollFutures</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">PollStreams</span> <span class="kw">as</span> <span class="kw">_</span>};
 
 				<span class="kw">let</span> <span class="ident">__result</span> <span class="op">=</span> <span class="kw">loop</span> {
 					<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">__complete</span> <span class="op">=</span> <span class="bool-val">true</span>;
@@ -428,14 +428,14 @@
 					#<span class="ident">stream</span>
 
 					<span class="kw">if</span> <span class="ident">__complete</span> {
-						<span class="kw">break</span> ::<span class="ident">std</span>::<span class="ident">option</span>::<span class="prelude-ty">Option</span>::<span class="prelude-val">None</span>;
+						<span class="kw">break</span> <span class="ident">::std::option::Option::None</span>;
 					} <span class="kw">else</span> {
 						::#<span class="ident">package</span>::<span class="ident">r#yield</span>().<span class="kw">await</span>;
 						#<span class="ident">r#yield</span>
 					}
 				};
 
-				<span class="kw">if</span> <span class="kw">let</span> ::<span class="ident">std</span>::<span class="ident">option</span>::<span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="ident">__result</span>) <span class="op">=</span> <span class="ident">__result</span> {
+				<span class="kw">if</span> <span class="kw">let</span> <span class="ident">::std::option::Option::Some</span>(<span class="ident">__result</span>) <span class="op">=</span> <span class="ident">__result</span> {
 					<span class="ident">__result</span>
 				} <span class="kw">else</span> {
 					#<span class="ident">complete</span>
@@ -444,7 +444,7 @@
 		})
 		.<span class="ident">into</span>()
 	} <span class="kw">else</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">TokenStream</span>::<span class="ident">new</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">TokenStream::new</span>();
 
 		<span class="kw">for</span> <span class="ident">Item</span> {
 			<span class="ident">var</span>,
@@ -452,16 +452,16 @@
 			<span class="ident">success</span>,
 		} <span class="kw">in</span> <span class="ident">items</span>
 		{
-			<span class="ident">stream</span>.<span class="ident">extend</span>(<span class="macro">quote</span><span class="macro">!</span> {
-				<span class="kw">if</span> <span class="kw">let</span> ::<span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Ready</span>(#<span class="ident">var</span>) <span class="op">=</span> (#<span class="ident">future</span>).<span class="ident">__into_poll</span>().<span class="kw">await</span> {
+			<span class="ident">stream</span>.<span class="ident">extend</span>(<span class="macro">quote!</span> {
+				<span class="kw">if</span> <span class="kw">let</span> <span class="ident">::std::task::Poll::Ready</span>(#<span class="ident">var</span>) <span class="op">=</span> (#<span class="ident">future</span>).<span class="ident">__into_poll</span>().<span class="kw">await</span> {
 					<span class="kw">break</span> #<span class="ident">success</span>;
 				}
 			});
 		}
 
-		(<span class="macro">quote</span><span class="macro">!</span> {
+		(<span class="macro">quote!</span> {
 			<span class="kw">loop</span> {
-				<span class="kw">use</span> ::#<span class="ident">package</span>::<span class="ident">select</span>::{<span class="ident">PollFutures</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">PollStreams</span> <span class="kw">as</span> <span class="kw">_</span>};
+				<span class="kw">use</span> ::#<span class="ident">package::select</span>::{<span class="ident">PollFutures</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">PollStreams</span> <span class="kw">as</span> <span class="kw">_</span>};
 
 				#<span class="ident">stream</span>
 
