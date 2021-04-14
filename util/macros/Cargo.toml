@@ -1,9 +1,10 @@
 [package]
 name = "allochronic-util-macros"
-version = "0.0.0-reserve"
-description = "reserved crate"
+version = "0.0.1-dev-1"
+description = "Private utility macro crate for allochronic and khonsulabs."
 license = "MIT OR Apache-2.0"
 edition = "2018"
+readme = "../../README.md"
 
 [lib]
 proc-macro = true

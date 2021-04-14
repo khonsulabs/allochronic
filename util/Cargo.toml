@@ -1,19 +1,18 @@
 [package]
 name = "allochronic-util"
-version = "0.0.0-reserve"
-description = "reserved crate"
+version = "0.0.1-dev-1"
+description = "Private utility crate for allochronic and khonsulabs."
 license = "MIT OR Apache-2.0"
 edition = "2018"
+readme = "../README.md"
 
 [dependencies]
 futures-executor = "0.3"
 futures-util = "0.3"
-macros = { package = "allochronic-util-macros", path = "macros" }
+macros = { version = "0.0.1-dev-1", package = "allochronic-util-macros", path = "macros" }
 pin-project = "1"
 trybuild = "1"
 
 [dev-dependencies]
 allochronic-util = { path = "" }
-macros = { package = "allochronic-util-macros", path = "macros", features = [
-  "test"
-] }
+macros = { version = "0.0.1-dev-1", package = "allochronic-util-macros", path = "macros", features = ["test"] }
