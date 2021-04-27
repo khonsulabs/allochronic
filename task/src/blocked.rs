@@ -13,7 +13,7 @@ use allochronic_channel::mpmc::Sender;
 use async_task::Task;
 use futures_util::FutureExt;
 
-use crate::{LocalRunnable, LocalSender, Runnable, error};
+use crate::{error, LocalRunnable, LocalSender, Runnable};
 
 #[allow(clippy::module_name_repetitions)]
 #[derive(Debug)]
@@ -51,11 +51,16 @@ impl<R> BlockedTask<R> {
 	}
 }
 
-pub fn block_on<F: Future, M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finished<F::Output>>(
+pub fn block_on<F, M>(
 	future: F,
 	sender: Sender<Runnable>,
 	main: M,
-) -> Result<F::Output, error::Cancelled> {
+) -> Result<F::Output, error::Cancelled>
+where
+	F: Future + Send,
+    F::Output: Send,
+	M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finished<F::Output>,
+{
 	let (runnable, task) = unsafe {
 		async_task::spawn_unchecked(
 			async move { Finished(Inner::Output(future.await)) },
@@ -89,14 +94,15 @@ pub fn block_on<F: Future, M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finish
 	}
 }
 
-pub fn block_on_local<
-	F: Future,
-	M: FnOnce(LocalRunnable, BlockedTask<F::Output>) -> Finished<F::Output>,
->(
+pub fn block_on_local<F, M>(
 	future: F,
 	sender: LocalSender,
 	main: M,
-) -> Result<F::Output, error::Cancelled> {
+) -> Result<F::Output, error::Cancelled>
+where
+	F: Future,
+	M: FnOnce(LocalRunnable, BlockedTask<F::Output>) -> Finished<F::Output>,
+{
 	let (runnable, task) = unsafe {
 		async_task::spawn_unchecked(
 			async move { Finished(Inner::Output(future.await)) },
