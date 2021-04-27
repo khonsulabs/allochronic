@@ -5,7 +5,6 @@ use std::{
 };
 
 use allochronic_channel::mpmc;
-pub use async_task::Runnable;
 use futures_util::{Stream, StreamExt};
 use mpmc::{Receiver, Sender};
 

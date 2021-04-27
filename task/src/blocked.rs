@@ -9,14 +9,15 @@ use std::{
 	task::{Context, Poll},
 };
 
+use allochronic_channel::mpmc::Sender;
 use async_task::Task;
 use futures_util::FutureExt;
 
-use crate::{error, LocalRunnable, LocalSender};
+use crate::{LocalRunnable, LocalSender, Runnable, error};
 
 #[allow(clippy::module_name_repetitions)]
 #[derive(Debug)]
-pub struct BlockedLocalTask<R>(Rc<RefCell<Option<Task<Finished<R>>>>>);
+pub struct BlockedTask<R>(Rc<RefCell<Option<Task<Finished<R>>>>>);
 
 #[derive(Debug)]
 pub struct Finished<R>(Inner<R>);
@@ -27,7 +28,7 @@ enum Inner<R> {
 	Cancelled,
 }
 
-impl<R> Future for BlockedLocalTask<R> {
+impl<R> Future for BlockedTask<R> {
 	type Output = Finished<R>;
 
 	fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
@@ -40,7 +41,7 @@ impl<R> Future for BlockedLocalTask<R> {
 	}
 }
 
-impl<R> BlockedLocalTask<R> {
+impl<R> BlockedTask<R> {
 	pub fn cancel(self) -> Finished<R> {
 		if let Some(task) = self.0.borrow_mut().take() {
 			futures_lite::future::block_on(async move { task.cancel().await });
@@ -50,9 +51,47 @@ impl<R> BlockedLocalTask<R> {
 	}
 }
 
+pub fn block_on<F: Future, M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finished<F::Output>>(
+	future: F,
+	sender: Sender<Runnable>,
+	main: M,
+) -> Result<F::Output, error::Cancelled> {
+	let (runnable, task) = unsafe {
+		async_task::spawn_unchecked(
+			async move { Finished(Inner::Output(future.await)) },
+			move |runnable| {
+				sender.send(runnable.into());
+			},
+		)
+	};
+	let task = Rc::new(RefCell::new(Some(task)));
+	let result = {
+		let task = BlockedTask(Rc::clone(&task));
+		panic::catch_unwind(AssertUnwindSafe(move || main(runnable.into(), task).0))
+	};
+
+	match result {
+		Ok(result) => match result {
+			Inner::Output(result) => Ok(result),
+			Inner::Cancelled => Err(error::Cancelled),
+		},
+		Err(panic) => {
+			if let Ok(mut task) = task.try_borrow_mut() {
+				if let Some(task) = task.take() {
+					futures_lite::future::block_on(task.cancel());
+				}
+			} else {
+				process::abort()
+			}
+
+			panic::resume_unwind(panic)
+		}
+	}
+}
+
 pub fn block_on_local<
 	F: Future,
-	M: FnOnce(LocalRunnable, BlockedLocalTask<F::Output>) -> Finished<F::Output>,
+	M: FnOnce(LocalRunnable, BlockedTask<F::Output>) -> Finished<F::Output>,
 >(
 	future: F,
 	sender: LocalSender,
@@ -69,7 +108,7 @@ pub fn block_on_local<
 	let runnable = LocalRunnable::new(runnable);
 	let task = Rc::new(RefCell::new(Some(task)));
 	let result = {
-		let task = BlockedLocalTask(Rc::clone(&task));
+		let task = BlockedTask(Rc::clone(&task));
 		panic::catch_unwind(AssertUnwindSafe(move || main(runnable, task).0))
 	};
 

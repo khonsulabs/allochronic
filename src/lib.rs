@@ -57,6 +57,7 @@
 	clippy::missing_panics_doc,
 	missing_docs
 )]
+#![cfg_attr(doc, allow(rustdoc::all))]
 
 mod error;
 mod executor;

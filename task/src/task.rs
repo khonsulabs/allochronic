@@ -4,11 +4,13 @@ use std::{
 	task::{Context, Poll},
 };
 
-use async_task::Runnable;
 use futures_util::FutureExt;
 
 #[derive(Debug)]
 pub struct Task<R>(Option<async_task::Task<R>>);
+
+#[derive(Debug)]
+pub struct Runnable(async_task::Runnable);
 
 impl<R> Future for Task<R> {
 	type Output = R;
@@ -28,13 +30,29 @@ impl<R> Drop for Task<R> {
 	}
 }
 
+impl From<async_task::Runnable> for Runnable {
+	fn from(runnable: async_task::Runnable) -> Self {
+		Self(runnable)
+	}
+}
+
+impl Runnable {
+	pub fn run(self) {
+		self.0.run();
+	}
+
+	pub fn schedule(self) {
+		self.0.schedule();
+	}
+}
+
 pub fn spawn<F, S>(future: F, schedule: S) -> (Runnable, Task<F::Output>)
 where
 	F: Future + Send + 'static,
 	F::Output: Send + 'static,
 	S: Fn(Runnable) + Send + Sync + 'static,
 {
-	let (runnable, task) = async_task::spawn(future, schedule);
+	let (runnable, task) = async_task::spawn(future, move |runnable| schedule(runnable.into()));
 
-	(runnable, Task(Some(task)))
+	(runnable.into(), Task(Some(task)))
 }

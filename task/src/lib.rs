@@ -49,6 +49,7 @@
 	warn(rustdoc::all),
 	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests)
 )]
+#![allow(unsafe_code)]
 // TODO: finish documentation
 #![allow(
 	clippy::missing_docs_in_private_items,
@@ -56,16 +57,15 @@
 	clippy::missing_panics_doc,
 	missing_docs
 )]
-#![allow(unsafe_code)]
+#![cfg_attr(doc, allow(rustdoc::all))]
 
-mod blocked_local;
+mod blocked;
 mod channel;
 pub mod error;
 mod local;
 mod task;
 
-pub use async_task::Runnable;
-pub use blocked_local::{block_on_local, BlockedLocalTask, Finished};
+pub use blocked::{block_on, block_on_local, BlockedTask, Finished};
 pub use channel::{unbounded, LocalReceiver, LocalSender};
 pub use local::LocalRunnable;
-pub use task::{spawn, Task};
+pub use task::{spawn, Runnable, Task};
