@@ -9,7 +9,6 @@ use std::{
 	task::{Context, Poll},
 };
 
-use allochronic_channel::mpmc::Sender;
 use async_task::Task;
 use futures_util::FutureExt;
 
@@ -51,21 +50,22 @@ impl<R> BlockedTask<R> {
 	}
 }
 
-pub fn block_on<F, M>(
+pub fn block_on<F, S, M>(
 	future: F,
-	sender: Sender<Runnable>,
+	schedule: S,
 	main: M,
 ) -> Result<F::Output, error::Cancelled>
 where
 	F: Future + Send,
-    F::Output: Send,
+	F::Output: Send,
+    S: Fn(Runnable) + Send + Sync + 'static,
 	M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finished<F::Output>,
 {
 	let (runnable, task) = unsafe {
 		async_task::spawn_unchecked(
 			async move { Finished(Inner::Output(future.await)) },
 			move |runnable| {
-				sender.send(runnable.into());
+				schedule(runnable.into());
 			},
 		)
 	};
