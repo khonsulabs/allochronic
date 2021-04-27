@@ -4,7 +4,10 @@ use std::{
 	cell::{Ref, RefCell, RefMut},
 	future::Future,
 	iter::FromIterator,
-	sync::{atomic::AtomicUsize, Arc},
+	sync::{
+		atomic::{AtomicUsize, Ordering},
+		Arc,
+	},
 };
 
 use allochronic_channel::{broadcast, flag::Flag, mpmc};
@@ -176,6 +179,14 @@ impl Worker {
 						runnable.run();
 					}
 				}
+
+				{
+					let executor = &worker.borrow().executor;
+
+					if executor.tasks.load(Ordering::Relaxed) == 0 {
+						executor.finished.notify();
+					}
+				}
 			}
 		});
 	}
@@ -235,6 +246,14 @@ impl Worker {
 								Message::Management(()) => (),
 								Message::Task(runnable) => {
 									runnable.run();
+								}
+							}
+
+							{
+								let executor = &worker.borrow().executor;
+
+								if executor.tasks.load(Ordering::Relaxed) == 0 {
+									executor.finished.notify();
 								}
 							}
 						}

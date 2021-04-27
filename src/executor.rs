@@ -1,6 +1,14 @@
-use std::{future::Future, iter::FromIterator, sync::{Arc, atomic::AtomicUsize}, thread};
+use std::{
+	future::Future,
+	iter::FromIterator,
+	sync::{
+		atomic::{AtomicUsize, Ordering},
+		Arc,
+	},
+	thread,
+};
 
-use allochronic_channel::{broadcast, flag::Flag, mpmc, oneshot};
+use allochronic_channel::{broadcast, flag::Flag, mpmc, notify::Notify, oneshot};
 use allochronic_task::Runnable;
 use parking_lot::{Mutex, RwLock};
 #[cfg(feature = "tokio-support")]
@@ -17,6 +25,7 @@ pub struct Executor {
 	pub(crate) tasks: AtomicUsize,
 	threads: Mutex<Vec<oneshot::Receiver<thread::Result<()>>>>,
 	pub(crate) shutdown: Flag,
+	pub(crate) finished: Notify,
 	management: broadcast::Sender<()>,
 	pub(crate) injector: RwLock<VecMap<VecMap<(Sender, Receiver)>>>,
 	#[cfg(feature = "tokio-support")]
@@ -47,10 +56,6 @@ impl Executor {
 			}
 		};
 
-		let shutdown = Flag::new();
-
-		let management = broadcast::unbounded();
-
 		let injector = mpmc::unbounded();
 		let injector_receiver = injector.1.clone();
 
@@ -64,8 +69,9 @@ impl Executor {
 		let executor = Arc::new(Self {
 			tasks: AtomicUsize::new(0),
 			threads: Mutex::default(),
-			shutdown,
-			management,
+			shutdown: Flag::new(),
+			finished: Notify::new(),
+			management: broadcast::unbounded(),
 			injector: RwLock::new(VecMap::from_iter(Some((
 				0,
 				VecMap::from_iter(Some((0, injector))),
@@ -130,5 +136,17 @@ impl Executor {
 
 	pub(crate) fn management(&self) -> broadcast::Receiver<()> {
 		self.management.subscribe()
+	}
+
+	pub async fn wait() {
+		let executor = Worker::with(|worker| Arc::clone(&worker.executor));
+
+		loop {
+			if executor.tasks.load(Ordering::SeqCst) == 0 {
+				break;
+			}
+
+			(&executor.finished).await;
+		}
 	}
 }

@@ -36,6 +36,11 @@ impl Notify {
 		Notifier(Arc::clone(&self.0))
 	}
 
+	pub fn notify(&self) {
+		self.0.status.store(true, Ordering::SeqCst);
+		self.0.waker.wake();
+	}
+
 	pub fn reset(&self) {
 		self.0.status.store(false, Ordering::SeqCst);
 	}
