@@ -1,0 +1,21 @@
+[package]
+name = "allochronic-macros"
+version = "0.0.0-dev.1"
+license = "MIT"
+description = "Private macros for Allochronic"
+repository = "https://github.com/khonsulabs/allochronic"
+edition = "2018"
+readme = "../README.md"
+categories = ["asynchronous"]
+keywords = ["async", "asynchronous", "executor"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+allochronic = { path = "../" }

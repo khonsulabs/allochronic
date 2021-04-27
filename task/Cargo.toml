@@ -1,0 +1,18 @@
+[package]
+name = "allochronic-task"
+version = "0.0.1-dev.1"
+description = "Private task crate for allochronic and khonsulabs."
+repository = "https://github.com/khonsulabs/allochronic"
+license = "MIT OR Apache-2.0"
+edition = "2018"
+readme = "../README.md"
+categories = ["asynchronous"]
+keywords = ["async", "asynchronous"]
+
+[dependencies]
+async-task = "4"
+allochronic-channel = { path = "../channel" }
+allochronic-util = { path = "../util" }
+futures-lite = "1"
+futures-util = "0.3"
+thiserror = "1"

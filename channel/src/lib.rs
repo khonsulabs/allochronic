@@ -8,6 +8,7 @@
 	rust_2018_idioms
 )]
 #![warn(
+	box_pointers,
 	macro_use_extern_crate,
 	meta_variable_misuse,
 	missing_copy_implementations,
@@ -23,18 +24,17 @@
 	unused_import_braces,
 	unused_lifetimes,
 	unused_qualifications,
+	unused_results,
 	variant_size_differences
 )]
 #![allow(
 	clippy::blanket_clippy_restriction_lints,
 	clippy::else_if_without_else,
-	clippy::expect_used,
 	clippy::exhaustive_enums,
 	clippy::exhaustive_structs,
 	clippy::future_not_send,
 	clippy::implicit_return,
 	clippy::missing_inline_in_public_items,
-	clippy::multiple_inherent_impl,
 	clippy::non_ascii_literal,
 	clippy::pattern_type_mismatch,
 	clippy::redundant_pub_crate,
@@ -45,25 +45,16 @@
 	unreachable_pub,
 	variant_size_differences
 )]
+// TODO: finish documentation
+#![allow(clippy::missing_docs_in_private_items, missing_docs)]
 #![cfg_attr(
 	doc,
 	warn(rustdoc::all),
 	allow(rustdoc::missing_doc_code_examples, rustdoc::private_doc_tests)
 )]
-// TODO: finish documentation
-#![allow(
-	clippy::missing_docs_in_private_items,
-	clippy::missing_errors_doc,
-	clippy::missing_panics_doc,
-	missing_docs
-)]
 
-mod error;
-mod executor;
-mod task;
-mod worker;
-
-pub use allochronic_macros::executor;
-pub use executor::Executor;
-pub use task::Task;
-use worker::Worker;
+pub mod broadcast;
+pub mod flag;
+pub mod mpmc;
+pub mod notify;
+pub mod oneshot;
