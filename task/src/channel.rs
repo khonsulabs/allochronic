@@ -7,24 +7,23 @@ use std::{
 use allochronic_channel::mpmc;
 pub use async_task::Runnable;
 use futures_util::{Stream, StreamExt};
+use mpmc::{Receiver, Sender};
 
 use crate::LocalRunnable;
 
-#[must_use]
-pub fn unbounded() -> (LocalSender, LocalReceiver) {
-	let (sender, receiver) = mpmc::unbounded();
+#[derive(Clone, Debug)]
+pub struct LocalSender(Sender<LocalRunnable>, PhantomData<*const ()>);
 
-	(
-		LocalSender(sender, PhantomData),
-		LocalReceiver(receiver, PhantomData),
-	)
+#[derive(Clone, Debug)]
+pub struct LocalReceiver(Receiver<LocalRunnable>, PhantomData<*const ()>);
+
+impl Stream for LocalReceiver {
+	type Item = LocalRunnable;
+
+	fn poll_next(mut self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+		self.0.poll_next_unpin(context)
+	}
 }
-
-#[derive(Clone, Debug)]
-pub struct LocalSender(mpmc::Sender<LocalRunnable>, PhantomData<*const ()>);
-
-#[derive(Clone, Debug)]
-pub struct LocalReceiver(mpmc::Receiver<LocalRunnable>, PhantomData<*const ()>);
 
 impl LocalSender {
 	pub fn send(&self, item: LocalRunnable) {
@@ -58,10 +57,12 @@ impl LocalReceiver {
 	}
 }
 
-impl Stream for LocalReceiver {
-	type Item = LocalRunnable;
+#[must_use]
+pub fn unbounded() -> (LocalSender, LocalReceiver) {
+	let (sender, receiver) = mpmc::unbounded();
 
-	fn poll_next(mut self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-		self.0.poll_next_unpin(context)
-	}
+	(
+		LocalSender(sender, PhantomData),
+		LocalReceiver(receiver, PhantomData),
+	)
 }
