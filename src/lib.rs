@@ -67,4 +67,4 @@ mod worker;
 pub use allochronic_macros::executor;
 pub use executor::Executor;
 pub use task::Task;
-use worker::Worker;
+use worker::{Message, Runnables, Worker};

@@ -13,7 +13,7 @@ keywords = ["async", "asynchronous", "executor"]
 edition = "2018"
 
 [features]
-tokio-support = ["tokio"]
+tokio-support = ["tokio", "tokio-util"]
 
 [dependencies]
 allochronic-channel = { path = "channel" }
@@ -43,8 +43,11 @@ rcgen = "0.8"
 tokio = { version = "1", features = ["macros", "sync", "time"] }
 
 [[example]]
+name = "executor"
+required-features = ["tokio-support"]
+
+[[example]]
 name = "quinn"
-harness = false
 required-features = ["tokio-support"]
 
 [[bench]]

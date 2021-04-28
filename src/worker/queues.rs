@@ -13,7 +13,7 @@ use vec_map::VecMap;
 
 type Receiver = mpmc::Receiver<Runnable>;
 
-pub(super) struct Priority<S: Stream>(VecMap<S>);
+pub(crate) struct Priority<S: Stream>(VecMap<S>);
 
 impl<S: Stream + Unpin> Stream for Priority<S> {
 	type Item = S::Item;
@@ -82,7 +82,7 @@ impl<I: Copy + PartialEq + Unpin, S: Stream + Unpin> Priority<Group<I, S>> {
 	}
 }
 
-pub(super) struct Group<I: Copy + PartialEq + Unpin, S: Stream + Unpin>(VecDeque<(I, S)>);
+pub(crate) struct Group<I: Copy + PartialEq + Unpin, S: Stream + Unpin>(VecDeque<(I, S)>);
 
 impl<I: Copy + PartialEq + Unpin, S: Stream + Unpin> Stream for Group<I, S> {
 	type Item = S::Item;
@@ -129,48 +129,48 @@ impl<I: Copy + PartialEq + Unpin, S: Stream + Unpin> Group<I, S> {
 	}
 }
 
-pub(super) enum Queues {
+pub(crate) enum Queues {
 	Group(Receiver),
 	Local(LocalReceiver),
 }
 
 #[derive(Clone, Copy, PartialEq)]
-pub(super) enum Queue {
+pub(crate) enum Queue {
 	Group(usize),
 	Local,
 }
 
 #[derive(Clone, Copy, PartialEq)]
-pub(super) enum Steal {
+pub(crate) enum Steal {
 	Injector(usize),
 	Stealer(usize),
 }
 
-pub(super) enum RunnableWrapper {
+pub(crate) enum Runnables {
 	Local(LocalRunnable),
 	Group(Runnable),
 }
 
 impl Stream for Queues {
-	type Item = RunnableWrapper;
+	type Item = Runnables;
 
 	fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
 		match self.get_mut() {
 			Queues::Group(task) => task
 				.poll_next_unpin(cx)
-				.map(|option| option.map(RunnableWrapper::Group)),
+				.map(|option| option.map(Runnables::Group)),
 			Queues::Local(task) => task
 				.poll_next_unpin(cx)
-				.map(|option| option.map(RunnableWrapper::Local)),
+				.map(|option| option.map(Runnables::Local)),
 		}
 	}
 }
 
-impl RunnableWrapper {
-	pub(super) fn run(self) {
+impl Runnables {
+	pub(crate) fn run(self) {
 		match self {
-			RunnableWrapper::Local(task) => task.run(),
-			RunnableWrapper::Group(task) => {
+			Runnables::Local(task) => task.run(),
+			Runnables::Group(task) => {
 				task.run();
 			}
 		}

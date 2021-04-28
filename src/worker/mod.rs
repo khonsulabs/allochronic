@@ -14,7 +14,8 @@ use allochronic_channel::{broadcast, flag::Flag, mpmc};
 use allochronic_task::{LocalReceiver, LocalSender, Runnable};
 use core_affinity::CoreId;
 use once_cell::unsync::OnceCell;
-use queues::{Group, Priority, Queue, Queues, RunnableWrapper, Steal};
+pub(crate) use queues::Runnables;
+use queues::{Group, Priority, Queue, Queues, Steal};
 use vec_map::VecMap;
 
 use crate::{error, Executor};
@@ -46,11 +47,11 @@ struct Inner {
 	management: broadcast::Receiver<()>,
 }
 
-enum Message<R> {
+pub(crate) enum Message<R> {
 	Shutdown,
 	Management(()),
-	Main(R),
-	Task(RunnableWrapper),
+	Blocked(R),
+	Task(Runnables),
 }
 
 // TODO: fix Clippy
@@ -65,10 +66,10 @@ impl Worker {
 	}
 
 	pub(crate) fn try_with<F: FnOnce(Option<Ref<'_, Self>>) -> R, R>(fun: F) -> R {
-		Self::WORKER.with(|worker| fun(worker.get().map(RefCell::borrow)))
+		Self::WORKER.with(|worker| fun(worker.get().and_then(|worker| worker.try_borrow().ok())))
 	}
 
-	fn with_mut<F: FnOnce(RefMut<'_, Self>) -> R, R>(fun: F) -> R {
+	pub(crate) fn with_mut<F: FnOnce(RefMut<'_, Self>) -> R, R>(fun: F) -> R {
 		Self::WORKER
 			.with(|worker| fun(worker.get().expect("`Worker` not initialized").borrow_mut()))
 	}
@@ -111,7 +112,7 @@ impl Worker {
 			.expect("`Worker` can't be initialized twice");
 	}
 
-	fn run<'w, S, F, R>(worker: &'w mut Self, select: S) -> Message<R>
+	pub(crate) fn run<'w, S, F, R>(worker: &'w mut Self, select: S) -> Message<R>
 	where
 		S: FnOnce(
 			&'w mut Flag,
@@ -121,7 +122,6 @@ impl Worker {
 		) -> F,
 		F: Future<Output = Option<Message<R>>>,
 	{
-		#[allow(clippy::await_holding_refcell_ref)]
 		futures_lite::future::block_on(async move {
 			let Worker {
 				inner: Inner {
@@ -166,13 +166,13 @@ impl Worker {
 							_: shutdown => Some(Message::Shutdown),
 							management: management => management.map(Message::Management),
 							task: queue => task.map(Message::Task),
-							task: stealer => task.map(RunnableWrapper::Group).map(Message::Task),
+							task: stealer => task.map(Runnables::Group).map(Message::Task),
 						)
 					},
 				);
 
 				match message {
-					Message::Main(()) => unreachable!("returned `main` in wrong function"),
+					Message::Blocked(()) => unreachable!("returned `main` in wrong function"),
 					Message::Shutdown => break,
 					Message::Management(()) => (),
 					Message::Task(runnable) => {
@@ -208,57 +208,54 @@ impl Worker {
 		Self::WORKER
 			.with(|worker| {
 				let worker = worker.get().expect("`Worker` not initialized");
-				allochronic_task::block_on_local(
-					main,
-					worker
-						.borrow()
-						.local
-						.get(0)
-						.expect("initial group doesn't exist")
-						.clone(),
-					|runnable, mut task| {
-						runnable.schedule();
+				let sender = worker
+					.borrow()
+					.local
+					.get(0)
+					.expect("initial group doesn't exist")
+					.clone();
+				allochronic_task::block_on_local(main, sender, |runnable, mut task| {
+					runnable.schedule();
 
-						loop {
-							let message = Self::run(
-								&mut *worker.borrow_mut(),
-								|shutdown, management, queue, stealer| {
-									let task = &mut task;
-									async move {
-										allochronic_util::select!(
-											result: task => Some(Message::Main(result)),
-											_: shutdown => Some(Message::Shutdown),
-											management: management => {
-												management.map(Message::Management)
-											},
-											task: queue => task.map(Message::Task),
-											task: stealer => {
-												task.map(RunnableWrapper::Group).map(Message::Task)
-											},
-										)
-									}
-								},
-							);
-
-							match message {
-								Message::Main(result) => break result,
-								Message::Shutdown => break task.cancel(),
-								Message::Management(()) => (),
-								Message::Task(runnable) => {
-									runnable.run();
+					loop {
+						let message = {
+							let worker = &mut *worker.borrow_mut();
+							Self::run(worker, |shutdown, management, queue, stealer| {
+								let task = &mut task;
+								async move {
+									allochronic_util::select!(
+										result: task => Some(Message::Blocked(result)),
+										_: shutdown => Some(Message::Shutdown),
+										management: management => {
+											management.map(Message::Management)
+										},
+										task: queue => task.map(Message::Task),
+										task: stealer => {
+											task.map(Runnables::Group).map(Message::Task)
+										},
+									)
 								}
-							}
+							})
+						};
 
-							{
-								let executor = &worker.borrow().executor;
-
-								if executor.tasks.load(Ordering::Relaxed) == 0 {
-									executor.finished.notify();
-								}
+						match message {
+							Message::Blocked(result) => break result,
+							Message::Shutdown => break task.cancel(),
+							Message::Management(()) => (),
+							Message::Task(runnable) => {
+								runnable.run();
 							}
 						}
-					},
-				)
+
+						{
+							let executor = &worker.borrow().executor;
+
+							if executor.tasks.load(Ordering::Relaxed) == 0 {
+								executor.finished.notify();
+							}
+						}
+					}
+				})
 			})
 			.map_err(|_cancelled| error::Executor::Cancelled)
 	}

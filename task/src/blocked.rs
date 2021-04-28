@@ -50,15 +50,11 @@ impl<R> BlockedTask<R> {
 	}
 }
 
-pub fn block_on<F, S, M>(
-	future: F,
-	schedule: S,
-	main: M,
-) -> Result<F::Output, error::Cancelled>
+pub fn block_on<F, S, M>(future: F, schedule: S, main: M) -> Result<F::Output, error::Cancelled>
 where
 	F: Future + Send,
 	F::Output: Send,
-    S: Fn(Runnable) + Send + Sync + 'static,
+	S: Fn(Runnable) + Send + Sync + 'static,
 	M: FnOnce(Runnable, BlockedTask<F::Output>) -> Finished<F::Output>,
 {
 	let (runnable, task) = unsafe {
