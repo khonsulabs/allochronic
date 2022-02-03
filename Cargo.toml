@@ -39,7 +39,7 @@ lto = true
 anyhow = "1"
 criterion = { version = "0.3", features = ["html_reports"] }
 quinn = { version = "0.7", default-features = false, features = ["tls-rustls"] }
-rcgen = "0.8"
+rcgen = "0.9"
 tokio = { version = "1", features = ["macros", "sync", "time"] }
 
 [[example]]
