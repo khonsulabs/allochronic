@@ -28,7 +28,7 @@ once_cell = "1.5"
 parking_lot = "0.12"
 thiserror = "1"
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
-tokio-util = { version = "0.6", features = ["rt"], optional = true }
+tokio-util = { version = "0.7", features = ["rt"], optional = true }
 vec_map = "0.8"
 
 [profile.bench]
